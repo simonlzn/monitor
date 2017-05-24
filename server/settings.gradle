@@ -1,0 +1,5 @@
+rootProject.name = 'server'
+include ':base'
+
+project(':base').projectDir = new File(settingsDir, '../base')
+

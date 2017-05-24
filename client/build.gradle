@@ -1,0 +1,45 @@
+group 'linec'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'spring-boot'
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+
+buildscript {
+    repositories {
+        maven {
+            url "http://10.20.0.10:8100/nexus/content/repositories/jcenter/"
+        }
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.2.7.RELEASE"
+    }
+}
+
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://10.20.0.10:8100/nexus/content/repositories/central/"
+    }
+
+    maven {
+        url "http://10.20.0.10:8100/nexus/content/repositories/releases/"
+    }
+}
+
+dependencies {
+    compile project(":base")
+    compile("org.springframework.boot:spring-boot-starter-web")
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
