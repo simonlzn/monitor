@@ -1,0 +1,14 @@
+build/
+.idea/
+gradle/
+.gradle/
+classes/
+server/build/
+base/build/
+client/build/
+server/.gradle/
+base/.gradle/
+client/.gradle/
+base/.idea/
+server/.idea/
+client/.idea/
