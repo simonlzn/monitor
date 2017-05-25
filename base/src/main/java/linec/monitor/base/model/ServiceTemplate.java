@@ -7,15 +7,17 @@ public class ServiceTemplate implements Serializable{
     private String port;
     private String searchKey;
     private String startScript;
+    private String logFilePath;
 
     public ServiceTemplate() {
     }
 
-    public ServiceTemplate(String name, String port, String searchKey, String startScript) {
+    public ServiceTemplate(String name, String port, String searchKey, String startScript, String logFilePath) {
         this.name = name;
         this.port = port;
         this.searchKey = searchKey;
         this.startScript = startScript;
+        this.logFilePath = logFilePath;
     }
 
     public String getName() {
@@ -48,5 +50,13 @@ public class ServiceTemplate implements Serializable{
 
     public void setStartScript(String startScript) {
         this.startScript = startScript;
+    }
+
+    public String getLogFilePath() {
+        return logFilePath;
+    }
+
+    public void setLogFilePath(String logFilePath) {
+        this.logFilePath = logFilePath;
     }
 }

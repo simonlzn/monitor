@@ -79,8 +79,8 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Services</div>
                     <div class="panel-body">
-                        <button type="button" class="btn btn-info" id="logBtn">Show Log</button>
-                        <div id="logInfo"></div>
+                        <div style="margin-left: 8px;"><button type="button" class="btn btn-info" id="logBtn">Show Log</button></div>
+                        <div id="logInfo" style="display: none; border-top: 1px solid rgba(0,0,0,.25); margin-top: 10px; padding-top: 10px"></div>
                     </div>
                 </div>
 
@@ -91,6 +91,10 @@
 
 <script src="/jquery/jquery-2.1.4.min.js"></script>
 <script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/js/overviewPanel.js"></script>
+<script src="/js/machinePanel.js"></script>
+<script src="/js/servicePanel.js"></script>
+<script src="/js/util.js"></script>
 
 <script>
     var serviceList = [];
@@ -99,198 +103,27 @@
         $.ajax({
             url: '/list/service',
             success: function (services) {
-                function contains(serviceList, service) {
-                    var exists = serviceList.filter(function (s) {
-                        if (s.id === service.id)
-                            return true;
-
-                        return false;
-                    });
-
-                    if (exists.length != 0)
-                        return true;
-
-                    return false;
-                }
-
                 services.forEach(function (service) {
                     service.id = service.ip + ':' + service.pid;
                 });
 
-                function showMachinePanel(ip) {
-                    $('#machineIp').val(ip);
-                    $('#machinePanel').show();
-
-                    $.ajax({
-                        url: '/list/serviceTemplate',
-                        success: function (templates) {
-                            var templateSelect = $('#templateSelect');
-                            templateSelect.html('<option>Select</option>');
-                            templates.forEach(function (template) {
-                                var option = $('<option></option>');
-                                option.val(template.name);
-                                option.html(template.name)
-                                templateSelect.append(option);
-                            })
-                        }
-                    });
-
-                    var machineIp = $('#machineIp').val();
-                    var serviceControlTemp = $('<tr style="display:none" id="serviceControlTemp">' +
-                            '<th class="control-label"></th>' +
-                            '<td><button type="button" class="pull-right btn btn-danger">Kill</button></td>' +
-                            '</tr>');
-
-                    $('#livingServiceList').html('');
-                    serviceList.forEach(function (service) {
-                        if (service.ip == machineIp) {
-                            var serviceControl = serviceControlTemp.clone();
-                            serviceControl.find('.control-label').html(service.name);
-                            serviceControl.attr('data-id', service.id);
-                            serviceControl.find('button').on('click', function () {
-                                var id = $(this).parent().parent().data('id');
-                                $.ajax({
-                                    url : '/service/' + id + '/kill',
-                                    type : 'post',
-                                    success : function () {
-                                        serviceControl.hide();
-                                    }
-                                })
-                            });
-                            serviceControl.show();
-                            $('#livingServiceList').append(serviceControl)
-                        }
-                    });
-
-
-
-                    var pids = [];
-                    serviceList.forEach(function (service) {
-                        if (service.ip == machineIp) {
-                            pids.push(service.pid);
-                        }
-                    });
-
-                    setInterval(function () {
-                        $.ajax({
-                            url : '/client/' + ip + '/top?pids=' + pids.join(','),
-                            success : function (ret) {
-                                $('#topInfo').html('');
-                                var lines = ret.split('\n');
-                                lines.forEach(function (line, index) {
-                                    if (index == 0 || index == 1)
-                                        return;
-                                    var textLine = $('<pre></pre>');
-                                    textLine.html(line);
-                                    textLine.css('background-color', 'white');
-                                    textLine.css('border', 'none');
-                                    $('#topInfo').append(textLine);
-                                })
-                            }
-                        })
-                    }, 2000);
-
-                    $('#createBtn').on('click', function () {
-                        var option = $('#templateSelect').val();
-                        $.ajax({
-                            url : '/service/' + ip + '/create',
-                            type : 'post',
-                            data : {'name' : option},
-//                            contentType : 'application/json'
-                        })
-                    })
-
-                }
-
-                function showServicePanel() {
-                    $('#servicePanel').show();
-                    $('#logBtn').on('click', function () {
-                        var serviceId = $('#serviceId').val();
-                        $.ajax({
-                            url : '/client/' + serviceId + '/log',
-                            success : function (log) {
-                                $('#logInfo').html(log);
-                            }
-                        })
-                    })
-                }
-
-                function addMachine(ip) {
-                    var container = $('<div style="cursor: pointer" name></div>')
-                    var iconElm = $('<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>');
-                    var ipElm = $('<span class="glyphicon-class" style="margin-left: 4px; padding : 2px">' + ip + '</span>');
-                    var machineElm = $('<div name="' + ip + '">' +
-                            '</div>');
-                    container.append(iconElm);
-                    container.append(ipElm);
-                    machineElm.append(container);
-                    $('#machineList').append(machineElm);
-
-                    container.on('click', function () {
-                        $(this).toggleClass('selected');
-                        $('[name]').not($(this)).removeClass('selected');
-
-                        showMachinePanel(ip);
-                        $('#servicePanel').hide();
-                    });
-
-                    iconElm.on('click', function (e) {
-                        $(this).toggleClass('glyphicon-chevron-down');
-                        $(this).toggleClass('glyphicon-chevron-right');
-
-                        $(this).parent().parent().find('[name*=":"]').toggle();
-                        e.stopPropagation();
-                    })
-                    return machineElm;
-                }
-
-                function addService(machineElm, service) {
-                    var serviceElm = $('<div name="' + service.ip + ':' + service.pid + '" style="margin:2px 2px 2px 10px;cursor: pointer; padding : 2px">' +
-                            '<span class="glyphicon glyphicon-flash" aria-hidden="true"></span>' +
-                            '<span class="glyphicon-class" style="margin-left: 4px">' + service.name + '(' + service.port + ')' + '</span>' +
-                            '</div>');
-
-                    serviceElm.on('click', function () {
-                        $(this).toggleClass('selected');
-                        $('[name]').not($(this)).removeClass('selected');
-
-                        $('#machinePanel').hide();
-                        showServicePanel();
-                    })
-
-                    machineElm.append(serviceElm);
-                }
-
-                function add(service) {
-                    var machineElm = $('[name = "' + service.ip + '"]');
-                    if (machineElm.length != 0) {
-                        if ($('[name="' + service.ip + ':' + service.pid + '"]').length == 0)
-                            addService(machineElm, service);
-                    } else {
-                        machineElm = addMachine(service.ip);
-                        addService(machineElm, service);
-                    }
-                }
-
-                function remove(service) {
-                    $('[name="' + service.ip + ':' + service.pid + '"]').remove();
-                }
-
                 services.forEach(function (service) {
-                    if (!contains(serviceList, service)) {
+                    if (!serviceList.contains(service)) {
                         add(service);
                         serviceList.push(service);
+                        $('#machinePanel').trigger('serviceListChange', serviceList);
                     }
                 });
 
                 serviceList.forEach(function (service) {
-                    if (!contains(services, service)) {
+                    if (!services.contains(service)) {
                         remove(service);
                         var index = serviceList.indexOf(service)
                         var tempList = [];
                         tempList = tempList.concat(serviceList.slice(0, index-1));
                         tempList = tempList.concat(serviceList.slice(index, serviceList.length-1))
                         serviceList = tempList;
+                        $('#machinePanel').trigger('serviceListChange', serviceList);
                     }
                 });
             }

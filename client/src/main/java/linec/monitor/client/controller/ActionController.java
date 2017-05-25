@@ -66,4 +66,31 @@ public class ActionController {
 
         return ret;
     }
+
+    @RequestMapping(value = "/log")
+    public String log(@RequestParam String logFilePath) throws IOException {
+        String ret = "";
+
+        try {
+            Process process = Runtime.getRuntime().exec("tail -n 50 " + logFilePath);
+            process.waitFor();
+            BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+
+            while ((line = input.readLine()) != null) {
+                ret += line + "\n";
+            }
+
+            input = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            while ((line = input.readLine()) != null) {
+                ret += line;
+            }
+
+            input.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ret;
+    }
 }

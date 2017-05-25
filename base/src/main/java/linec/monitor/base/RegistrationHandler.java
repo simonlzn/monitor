@@ -26,8 +26,9 @@ public class RegistrationHandler implements EnvironmentAware{
         String currentIp = IpUtil.getCurrentIp();
         String port = environment.getProperty("server.port");
         String description = environment.getProperty("spring.application.name");
+        String logFilePath = System.getProperty("user.dir") + "/" + environment.getProperty("logging.file");
 
-        Registration registration = new Registration(getPID(), currentIp, port, name, startScript, description);
+        Registration registration = new Registration(getPID(), currentIp, port, name, startScript, description, logFilePath);
         template.put(monitorServerUrl + "/register", registration);
     }
 

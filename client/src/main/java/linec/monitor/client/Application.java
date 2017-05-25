@@ -45,7 +45,6 @@ public class Application {
                     e.printStackTrace();
                 }
             }
-
         } catch (SocketException e) {
             e.printStackTrace();
         }

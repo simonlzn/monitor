@@ -25,7 +25,7 @@ public class RegisterController {
     public void register(@RequestBody Registration registration){
         Service service = new Service(registration.getPid(), registration.getIp(), registration.getPort(), registration.getName());
         servicePool.put(registration.getIp()+":"+registration.getPid(), service);
-        ServiceTemplate serviceTemplate = new ServiceTemplate(registration.getName(), registration.getPort(), registration.getSearchKey(), registration.getStartScript());
+        ServiceTemplate serviceTemplate = new ServiceTemplate(registration.getName(), registration.getPort(), registration.getSearchKey(), registration.getStartScript(), registration.getLogFilePath());
         serviceTemplatePool.put(registration.getName(), serviceTemplate);
     }
 }

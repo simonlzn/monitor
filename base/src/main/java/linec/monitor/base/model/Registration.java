@@ -9,6 +9,7 @@ public class Registration implements Serializable{
     private String searchKey;
     private String startScript;
     private String name;
+    private String logFilePath;
 
     public Registration() {
     }
@@ -25,6 +26,17 @@ public class Registration implements Serializable{
         this.searchKey = searchKey;
         this.startScript = startScript;
         this.name = name;
+        this.logFilePath = "`pwd`/log/current.log";
+    }
+
+    public Registration(Long pid, String ip, String port, String searchKey, String startScript, String name, String logFilePath) {
+        this.pid = pid;
+        this.ip = ip;
+        this.port = port;
+        this.searchKey = searchKey;
+        this.startScript = startScript;
+        this.name = name;
+        this.logFilePath = logFilePath;
     }
 
     public Long getPid() {
@@ -73,6 +85,14 @@ public class Registration implements Serializable{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLogFilePath() {
+        return logFilePath;
+    }
+
+    public void setLogFilePath(String logFilePath) {
+        this.logFilePath = logFilePath;
     }
 
     @Override

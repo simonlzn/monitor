@@ -37,13 +37,23 @@ public class ServiceController {
 
     @RequestMapping(value = "/{ipAndPid}/log")
     public String log(@PathVariable String ipAndPid){
+        String[] split = ipAndPid.split(":");
+
+        if (split.length != 2)
+            return "";
+
+        String ip = split[0];
+
         Service service = servicePool.get(ipAndPid);
 
-        String name = service.getName();
+        ServiceTemplate serviceTemplate = serviceTemplatePool.get(service.getName());
+        String logFilePath = serviceTemplate.getLogFilePath();
 
-        ServiceTemplate serviceTemplate = serviceTemplatePool.get(name);
+        RestTemplate template = new RestTemplate();
 
-        return serviceTemplate.getStartScript();
+        String ret = template.getForObject("http://" + ip + ":9090/action/log?logFilePath=" + logFilePath, String.class);
+
+        return ret;
     }
 
     @RequestMapping(value = "/{ipAndPid}/kill")
