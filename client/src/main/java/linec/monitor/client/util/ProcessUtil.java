@@ -27,6 +27,9 @@ public class ProcessUtil {
     }
 
     public static synchronized List<Long> getPidsByCommand(String command) throws InterruptedException, IOException {
+        if (command == null || command.isEmpty())
+            return new ArrayList<>();
+
         Vector<String> commands=new Vector<String>();
         commands.add("/bin/bash");
         commands.add("-c");

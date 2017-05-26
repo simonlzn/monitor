@@ -45,10 +45,27 @@ public class ActionController {
             for (int i = 0; i < split.length; i++) {
                 pidComm += " -p " + split[i];
             }
-            Process process = Runtime.getRuntime().exec("top -b -n 1" + pidComm);
+            Process process = Runtime.getRuntime().exec("top -b -n 1");
             process.waitFor();
             BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
+            int count = 6;
+
+            while ((line = input.readLine()) != null && count > 0) {
+                ret += line + "\n";
+                count--;
+            }
+
+            input = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            while ((line = input.readLine()) != null) {
+                ret += line;
+            }
+
+            input.close();
+
+            process = Runtime.getRuntime().exec("ps -o pid,user,%cpu,%mem,time,command " + pidComm);
+            process.waitFor();
+            input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             while ((line = input.readLine()) != null) {
                 ret += line + "\n";

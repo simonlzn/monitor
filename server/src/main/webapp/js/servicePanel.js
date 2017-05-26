@@ -3,7 +3,7 @@ function showServicePanel(id) {
     $('#serviceId').val(id);
     $('#logInfo').html('');
     $('#logInfo').hide();
-    $('#logBtn').on('click', function () {
+    $('#logBtn').off('click').on('click', function () {
         var serviceId = $('#serviceId').val();
         $.ajax({
             url : '/service/' + serviceId + '/log',
