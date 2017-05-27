@@ -20,13 +20,13 @@ public class RegistrationHandler implements EnvironmentAware{
     public RegistrationHandler() {
     }
 
-    private static String monitorServerUrl = "http://localhost:9090";
+    private static String monitorServerUrl = "http://localhost:8091";
 
-    public static void register(String name, String startScript) throws UnknownHostException, SocketException {
+    public static void register(String name, String startScript, String logDir) throws UnknownHostException, SocketException {
         String currentIp = IpUtil.getCurrentIp();
         String port = environment.getProperty("server.port");
         String description = environment.getProperty("spring.application.name");
-        String logFilePath = System.getProperty("user.dir") + "/" + environment.getProperty("logging.file");
+        String logFilePath = logDir + "/" + environment.getProperty("logging.file");
 
         Registration registration = new Registration(getPID(), currentIp, port, name, startScript, description, logFilePath);
         template.put(monitorServerUrl + "/register", registration);

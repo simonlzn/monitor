@@ -51,7 +51,7 @@ public class ServiceController {
 
         RestTemplate template = new RestTemplate();
 
-        String ret = template.getForObject("http://" + ip + ":9090/action/log?logFilePath=" + logFilePath, String.class);
+        String ret = template.getForObject("http://" + ip + ":8091/action/log?logFilePath=" + logFilePath, String.class);
 
         return ret;
     }
@@ -68,7 +68,7 @@ public class ServiceController {
 
         RestTemplate template = new RestTemplate();
 
-        template.postForLocation("http://" + ip + ":9090/action/" + pid + "/kill", null);
+        template.postForLocation("http://" + ip + ":8091/action/" + pid + "/kill", null);
     }
 
     @RequestMapping(value = "/{ip}/create", method = RequestMethod.POST)
@@ -77,6 +77,6 @@ public class ServiceController {
 
         Registration registration = new Registration(0L, ip, serviceTemplate.getPort(), serviceTemplate.getSearchKey(), serviceTemplate.getStartScript(), name);
         RestTemplate template = new RestTemplate();
-        template.postForLocation("http://" + ip + ":9090/action/create", registration);
+        template.postForLocation("http://" + ip + ":8091/action/create", registration);
     }
 }

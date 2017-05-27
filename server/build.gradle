@@ -2,19 +2,16 @@ group 'linec'
 version '1.0'
 
 apply plugin: 'java'
-apply plugin: 'application'
+apply plugin: 'war'
 apply plugin: 'spring-boot'
 
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-compileJava.options.encoding = 'UTF-8'
 
 buildscript {
     repositories {
-        maven {
-            url "http://10.20.0.10:8100/nexus/content/repositories/jcenter/"
-        }
+        jcenter()
     }
 
     dependencies {
@@ -25,13 +22,6 @@ buildscript {
 
 repositories {
     mavenCentral()
-    maven {
-        url "http://10.20.0.10:8100/nexus/content/repositories/central/"
-    }
-
-    maven {
-        url "http://10.20.0.10:8100/nexus/content/repositories/releases/"
-    }
 }
 dependencies {
     compile project(":base")

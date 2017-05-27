@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@Configuration
 public class Application implements ApplicationContextAware {
     private static ApplicationContext context;
 
